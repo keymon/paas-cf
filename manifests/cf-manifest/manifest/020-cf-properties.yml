@@ -133,6 +133,7 @@ properties:
 
   router:
     enable_ssl: false
+    enable_access_log_streaming: true
     requested_route_registration_interval_in_seconds:
     ssl_skip_validation:
     status:
