@@ -110,6 +110,7 @@ datadog_api_key: ${datadog_api_key:-}
 datadog_app_key: ${datadog_app_key:-}
 enable_datadog: ${ENABLE_DATADOG}
 enable_cve_notifier: ${ENABLE_CVE_NOTIFIER:-false}
+enable_cve_monitor: ${ENABLE_CVE_MONITOR:-false}
 enable_paas_dashboard: ${ENABLE_PAAS_DASHBOARD:-false}
 EOF
   echo -e "pipeline_lock_git_private_key: |\n  ${git_id_rsa//$'\n'/$'\n'  }"

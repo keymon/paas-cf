@@ -2010,6 +2010,7 @@ jobs:
               TF_VAR_datadog_app_key: {{datadog_app_key}}
               TF_VAR_aws_account: {{aws_account}}
               ENABLE_CVE_NOTIFIER: {{enable_cve_notifier}}
+              ENABLE_CVE_MONITOR: {{enable_cve_monitor}}
               ENABLE_DATADOG: {{enable_datadog}}
             run:
               path: sh
@@ -2028,6 +2029,7 @@ jobs:
 
                   if [ "${ENABLE_DATADOG}" = "true" ]; then
                     [ "${ENABLE_CVE_NOTIFIER}" = "true" ] && export TF_VAR_enable_cve_notifier=1
+                    [ "${ENABLE_CVE_MONITOR}" = "true" ] && export TF_VAR_enable_cve_monitor=1
                     terraform apply -state=datadog-tfstate/datadog.tfstate -state-out=updated-tfstate/datadog.tfstate \
                       -var-file=config/job_instances.tfvars paas-cf/terraform/datadog
                   else
@@ -2053,6 +2055,7 @@ jobs:
               - name: bosh-CA
             params:
               ENABLE_CVE_NOTIFIER: {{enable_cve_notifier}}
+              ENABLE_CVE_MONITOR: {{enable_cve_monitor}}
               DEPLOY_ENV: {{deploy_env}}
             run:
               path: sh

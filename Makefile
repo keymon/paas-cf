@@ -154,6 +154,7 @@ prod: globals check-env-vars ## Set Environment to Production
 	$(eval export ENABLE_DATADOG=true)
 	$(eval export DECRYPT_CONCOURSE_ATC_PASSWORD=prod_deployment)
 	$(eval export ENABLE_CVE_NOTIFIER=true)
+	$(eval export ENABLE_CVE_MONITOR=true)
 	$(eval export ENABLE_PAAS_DASHBOARD=true)
 	@true
 
