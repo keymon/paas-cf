@@ -426,6 +426,8 @@ properties:
         authorized-grant-types: authorization_code,client_credentials,refresh_token
         redirect-uri: (( concat "https://login." properties.system_domain ))
         secret: (( grab secrets.uaa_clients_login_secret ))
+        app-launch-url: https://docs.cloud.service.gov.uk/#get-started
+        show-on-homepage: true
       cf:
         id: cf
         override: true
