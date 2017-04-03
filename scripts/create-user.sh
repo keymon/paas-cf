@@ -17,15 +17,13 @@ MESSAGE='Hello,
 
 Your account for the Government PaaS service has been created.
 
-Your organisation is \"${ORG}\" and your login and password are:
+Your organisation is \"${ORG}\" and your login is:
 
  - login: ${EMAIL}
- - password: ${PASSWORD}
+ - invite: ${INVITE_URL}
 
 To get started, look at our Quick Setup Guide:
 https://docs.cloud.service.gov.uk/#quick-setup-guide
-
-You should make sure to change your password, as explained in the Quick Setup Guide.
 
 You can find our privacy policy here:
 https://docs.cloud.service.gov.uk/#privacy-policy
@@ -51,9 +49,10 @@ Usage:
   $SCRIPT [-m] -e <email> -o <orgname> [--no-email]
 
 $SCRIPT will create a user and organisation in the CF service where you
-are currently logged in and send an email to the user if the password changes.
+are currently logged in and send an email to the user with an invite URL if
+they didn't previously have an account.
 
-To print the password instead of emailing, supply the '--no-email' flag (useful for development)
+To print the invite URL instead of emailing, supply the '--no-email' flag (useful for development)
 
 Nothing will change if the organisation or the user already exists
 This way you can add a user to multiple organisations by running the script
@@ -98,6 +97,10 @@ check_params_and_environment() {
     abort_usage "Org must be defined"
   fi
 
+  if ! jq -V >/dev/null 2>&1; then
+    abort "You need to have jq installed"
+  fi
+
   if ! cf orgs >/dev/null 2>&1; then
     abort "You need to be logged into CF CLI"
   fi
@@ -106,13 +109,6 @@ check_params_and_environment() {
     abort "You must have AWS cli installed and configured with valid credentials. Test it with: aws ses get-send-quota"
   fi
 
-}
-
-generate_password() {
-  PASSWORD=$(LC_CTYPE=C tr -cd '[:alpha:]0-9.,;:!?_/-' < /dev/urandom | head -c32 || true)
-  if [[ -z "${PASSWORD}" ]]; then
-    abort "Failure generating password"
-  fi
 }
 
 create_org_space() {
@@ -134,11 +130,39 @@ create_org_space() {
 }
 
 create_user() {
-  if cf create-user "${EMAIL}" "${PASSWORD}" 2>&1 | tee "${TMP_OUTPUT}"; then
-    if ! grep -q "already exists" "${TMP_OUTPUT}"; then
-      USER_CREATED=true
-    fi
+  export INVITE_URL
+  local uaa_endpoint cf_token ssl_arg uaa_uuid
+
+  uaa_endpoint=$(cf curl /v2/info | jq -r '.authorization_endpoint')
+  cf_token=$(cf oauth-token)
+  ssl_arg=$([ "$(jq -er '.SSLDisabled' ~/.cf/config.json)" = "true" ] && echo "-k" )
+
+  curl -sf "${ssl_arg}" \
+    -H "Authorization: ${cf_token}" \
+    -H "Accept: application/json" -H "Content-Type: application/json" \
+    -G --data-urlencode "filter=userName eq \"${EMAIL}\"" \
+    "${uaa_endpoint}/Users" 2>&1 >"${TMP_OUTPUT}"
+
+  if jq -e '.totalResults | contains(1)' "${TMP_OUTPUT}" >/dev/null; then
+    uaa_uuid=$(jq -er '.resources[0].id' "${TMP_OUTPUT}")
   else
+    curl -sf "${ssl_arg}" \
+      -H "Authorization: ${cf_token}" \
+      -H "Accept: application/json" -H "Content-Type: application/json" \
+      -d "{\"emails\": [\"${EMAIL}\"]}" \
+      "${uaa_endpoint}/invite_users?redirect_uri=" 2>&1 >"${TMP_OUTPUT}"
+
+    uaa_uuid=$(jq -er '.new_invites[0].userId' "${TMP_OUTPUT}")
+    INVITE_URL=$(jq -er '.new_invites[0].inviteLink' "${TMP_OUTPUT}")
+    USER_CREATED=true
+  fi
+
+  cf curl \
+    -X POST \
+    -d "{\"guid\": \"${uaa_uuid}\"}" \
+    /v2/users 2>&1 >"${TMP_OUTPUT}"
+
+  if ! jq -e '(has("entity")) or (.error_code | contains("CF-UaaIdTaken"))' "${TMP_OUTPUT}" >/dev/null; then
     abort "Error creating user ${EMAIL}"
   fi
 }
@@ -190,14 +214,14 @@ send_mail() {
   show_notification
 }
 
-print_password() {
-  success "${EMAIL} has had their password changed to ${PASSWORD}"
+print_invite() {
+  success "Created invite ${INVITE_URL} for ${EMAIL}"
 }
 
-emit_password() {
+emit_invite() {
   if [ "${USER_CREATED}" = "true" ]; then
     if [ "${NO_EMAIL:-}" = "true" ]; then
-      print_password
+      print_invite
     else
       send_mail
     fi
@@ -245,8 +269,7 @@ done
 load_colors
 check_params_and_environment
 
-generate_password
 create_org_space
 create_user
 set_user_roles
-emit_password
+emit_invite
