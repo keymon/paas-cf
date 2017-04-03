@@ -48,7 +48,7 @@ usage() {
   cat <<EOF
 Usage:
 
-  $SCRIPT [-r] [-m] -e <email> -o <orgname> [--no-email]
+  $SCRIPT [-m] -e <email> -o <orgname> [--no-email]
 
 $SCRIPT will create a user and organisation in the CF service where you
 are currently logged in and send an email to the user if the password changes.
@@ -56,7 +56,6 @@ are currently logged in and send an email to the user if the password changes.
 To print the password instead of emailing, supply the '--no-email' flag (useful for development)
 
 Nothing will change if the organisation or the user already exists
-(unless the -r flag is used, which recreates the user with a new password).
 This way you can add a user to multiple organisations by running the script
 multiple times.
 
@@ -66,9 +65,6 @@ Requirements:
  * You must have a functional aws client with credentials configured.
 
 Where:
-  -r           Delete/recreate the user. The user will be recreated
-               and the password reset.
-
   -m           Make the user an Org Manager
 
   -e <email>   User email to add and configure as organization and
@@ -138,14 +134,6 @@ create_org_space() {
 }
 
 create_user() {
-  if [[ "${RESET_USER}" == "true" ]]; then
-    if cf delete-user "${EMAIL}" -f 2>&1 | tee "${TMP_OUTPUT}"; then
-      if grep -q "does not exist" "${TMP_OUTPUT}"; then
-        abort "Trying to reset password for non-existing user. Is someone trying to trick you into getting an account?"
-      fi
-    fi
-  fi
-
   if cf create-user "${EMAIL}" "${PASSWORD}" 2>&1 | tee "${TMP_OUTPUT}"; then
     if ! grep -q "already exists" "${TMP_OUTPUT}"; then
       USER_CREATED=true
@@ -214,7 +202,7 @@ emit_password() {
       send_mail
     fi
   else
-    echo "No new users created. Use -r to force password reset for existing users."
+    echo "No new users created."
   fi
 }
 
@@ -226,7 +214,6 @@ show_notification() {
 TMP_OUTPUT="$(mktemp -t create-tenant-output.XXXXXX)"
 trap 'rm -f "${TMP_OUTPUT}"' EXIT
 
-RESET_USER=false
 USER_CREATED=false
 ORG_MANAGER=false
 
@@ -241,9 +228,6 @@ while [[ $# -gt 0 ]]; do
     -e|--email)
       EMAIL="$1"
       shift
-    ;;
-    -r|--reset-user)
-      RESET_USER=true
     ;;
     -m|--manager)
       ORG_MANAGER=true
