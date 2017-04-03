@@ -419,6 +419,9 @@ properties:
           refreshTokenValiditySeconds: 604800
 
     clients:
+      documentation:
+        show-on-homepage: true
+        app-launch-url: https://docs.cloud.service.gov.uk/
       login:
         override: true
         scope: openid,oauth.approvals
