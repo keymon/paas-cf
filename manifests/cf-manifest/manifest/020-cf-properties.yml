@@ -389,6 +389,7 @@ properties:
           groups:
             - scim.write
             - scim.read
+            - scim.invite
             - openid
             - cloud_controller.admin
             - doppler.firehose
