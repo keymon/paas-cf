@@ -79,6 +79,22 @@ globals:
 	$(eval export PASSWORD_STORE_DIR=${PASSWORD_STORE_DIR})
 	@true
 
+.PHONY: sandbox
+sandbox: globals ## Set Environment to SANDBOX
+	$(eval export AWS_ACCOUNT=sandbox)
+	$(eval export ENABLE_DESTROY=true)
+	$(eval export ENABLE_AUTODELETE=true)
+	$(eval export SYSTEM_DNS_ZONE_NAME=${DEPLOY_ENV}.cf.sandbox.mergermarket.it)
+	$(eval export APPS_DNS_ZONE_NAME=${DEPLOY_ENV}.cf-apps.sandbox.mergermarket.it)
+	$(eval export SKIP_COMMIT_VERIFICATION=true)
+	$(eval export ENV_SPECIFIC_CF_MANIFEST=cf-default.yml)
+	$(eval export DISABLE_HEALTHCHECK_DB=true)
+	$(eval export ENABLE_DATADOG ?= false)
+	$(eval export CONCOURSE_AUTH_DURATION=48h)
+	$(eval export DISABLE_PIPELINE_LOCKING=true)
+	$(eval export TEST_HEAVY_LOAD=true)
+	@true
+
 .PHONY: dev
 dev: globals ## Set Environment to DEV
 	$(eval export AWS_ACCOUNT=dev)
