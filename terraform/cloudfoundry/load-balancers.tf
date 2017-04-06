@@ -54,8 +54,7 @@ resource "aws_alb" "cf_uaa" {
 
   access_logs {
     bucket        = "${aws_s3_bucket.elb_access_log.id}"
-    bucket_prefix = "cf-uaa"
-    interval      = 5
+    prefix        = "cf-uaa"
   }
 }
 
