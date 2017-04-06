@@ -50,7 +50,7 @@ prepare_environment() {
   pipelines_to_update="${PIPELINES_TO_UPDATE:-create-cloudfoundry destroy-cloudfoundry autodelete-cloudfoundry failure-testing}"
   bosh_az=${BOSH_AZ:-eu-west-1a}
 
-  state_bucket=gds-paas-${DEPLOY_ENV}-state
+  state_bucket=mmg-${DEPLOY_ENV}-state
 
   cf_manifest_dir="${SCRIPT_DIR}/../../manifests/cf-manifest/manifest"
   cf_release_version=$("${SCRIPT_DIR}"/val_from_yaml.rb releases.cf.version "${cf_manifest_dir}/000-base-cf-deployment.yml")
@@ -97,7 +97,7 @@ skip_upload_generated_certs: ${SKIP_UPLOAD_GENERATED_CERTS:-false}
 aws_account: ${AWS_ACCOUNT:-dev}
 deploy_env: ${DEPLOY_ENV}
 state_bucket: ${state_bucket}
-test_artifacts_bucket: gds-paas-${DEPLOY_ENV}-test-artifacts
+test_artifacts_bucket: mmg-${DEPLOY_ENV}-test-artifacts
 pipeline_trigger_file: ${pipeline_name}.trigger
 branch_name: ${BRANCH:-master}
 aws_region: ${AWS_DEFAULT_REGION}

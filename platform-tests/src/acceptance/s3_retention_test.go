@@ -27,7 +27,7 @@ var _ = Describe("S3 logs bucket", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		svc := s3.New(sess)
-		bucket := "gds-paas-" + GetConfigFromEnvironment("DEPLOY_ENV") + "-elb-access-log"
+		bucket := "mmg-" + GetConfigFromEnvironment("DEPLOY_ENV") + "-elb-access-log"
 		getBucketInput := &s3.GetBucketLifecycleConfigurationInput{
 			Bucket: aws.String(bucket),
 		}

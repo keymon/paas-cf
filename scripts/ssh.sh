@@ -38,12 +38,12 @@ download_key() {
   trap 'rm -f $key' EXIT
 
   eval "$(make "${AWS_ACCOUNT}" showenv | grep CONCOURSE_IP=)"
-  aws s3 cp "s3://gds-paas-${DEPLOY_ENV}-state/concourse_id_rsa" $key && chmod 400 $key
+  aws s3 cp "s3://mmg-${DEPLOY_ENV}-state/concourse_id_rsa" $key && chmod 400 $key
 }
 
 ssh_concourse() {
   echo
-  aws s3 cp "s3://gds-paas-${DEPLOY_ENV}-state/concourse-secrets.yml" - | \
+  aws s3 cp "s3://mmg-${DEPLOY_ENV}-state/concourse-secrets.yml" - | \
     ruby -ryaml -e 'puts "Sudo password is " + YAML.load(STDIN)["secrets"]["concourse_vcap_password_orig"]'
   echo
 

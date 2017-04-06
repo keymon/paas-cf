@@ -17,4 +17,4 @@ secrets:
   google_oauth_client_secret: ${OAUTH_CLIENT_SECRET}
 EOF
 
-aws s3 cp "${SECRETS}" "s3://gds-paas-${DEPLOY_ENV}-state/google-oauth-secrets.yml"
+aws s3 cp "${SECRETS}" "s3://mmg-${DEPLOY_ENV}-state/google-oauth-secrets.yml"
