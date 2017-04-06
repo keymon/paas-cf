@@ -14,7 +14,7 @@ resources:
   - name: paas-cf
     type: git
     source:
-      uri: https://github.com/alphagov/paas-cf.git
+      uri: https://github.com/keymon/paas-cf.git
       branch: {{branch_name}}
       tag_filter: {{paas_cf_tag_filter}}
       commit_verification_key_ids: {{gpg_ids}}
