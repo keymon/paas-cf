@@ -18,7 +18,7 @@ jobs:
     release: logsearch
   vm_type: small
   stemcell: default
-  instances: 2
+  instances: 0
   networks:
   - name: cf
     static_ips:
@@ -36,7 +36,7 @@ jobs:
     release: logsearch-for-cloudfoundry
   vm_type: medium
   stemcell: default
-  instances: 1
+  instances: 0
   networks:
   - name: cf
     static_ips:
@@ -56,7 +56,7 @@ jobs:
     release: logsearch-for-cloudfoundry
   vm_type: medium
   stemcell: default
-  instances: 1
+  instances: 0
   networks:
   - name: cf
     static_ips:
@@ -74,7 +74,7 @@ jobs:
     release: logsearch
   vm_type: elasticsearch_master
   stemcell: default
-  instances: 3
+  instances: 0
   networks:
   - name: cf
     static_ips:
@@ -92,7 +92,7 @@ jobs:
       master_hosts: (( grab properties.elasticsearch.master_hosts ))
 
 - name: maintenance
-  instances: 1
+  instances: 0
   release: logsearch
   azs: [z1, z2]
   templates:
@@ -121,7 +121,7 @@ jobs:
     release: logsearch
   vm_type: kibana
   stemcell: default
-  instances: 1
+  instances: 0
   networks:
   - name: cf
 
@@ -133,7 +133,7 @@ jobs:
     release: logsearch
   vm_type: ingestor
   stemcell: default
-  instances: 1
+  instances: 0
   networks:
   - name: cf
     default: [gateway, dns]
@@ -153,7 +153,7 @@ jobs:
     release: logsearch
   vm_type: ingestor
   stemcell: default
-  instances: 1
+  instances: 0
   networks:
   - name: cf
     default: [gateway, dns]
