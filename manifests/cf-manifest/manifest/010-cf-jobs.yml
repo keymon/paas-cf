@@ -222,7 +222,7 @@ jobs:
         release: diego
       - name: metron_agent
         release: cf
-    instances: 2
+    instances: 1
     vm_type: medium
     vm_extensions:
       - cf_rds_client_sg
@@ -238,7 +238,7 @@ jobs:
   - name: uaa
     azs: [z1, z2]
     templates: (( grab meta.uaa_templates ))
-    instances: 2
+    instances: 1
     vm_type: medium
     vm_extensions:
       - cf_uaa_elb
@@ -255,7 +255,7 @@ jobs:
   - name: api
     azs: [z1, z2]
     templates: (( grab meta.api_templates ))
-    instances: 2
+    instances: 1
     vm_type: medium
     vm_extensions:
       - 64g_ephemeral_disk
@@ -273,7 +273,7 @@ jobs:
   - name: api_worker
     azs: [z1, z2]
     templates: (( grab meta.api_worker_templates ))
-    instances: 2
+    instances: 1
     vm_type: medium
     vm_extensions:
       - 64g_ephemeral_disk
@@ -286,7 +286,7 @@ jobs:
   - name: doppler
     azs: [z1, z2]
     templates: (( grab meta.loggregator_templates ))
-    instances: 2
+    instances: 1
     vm_type: medium
     stemcell: default
     networks:
@@ -300,7 +300,7 @@ jobs:
   - name: loggregator_trafficcontroller
     azs: [z1, z2]
     templates: (( grab meta.loggregator_trafficcontroller_templates ))
-    instances: 2
+    instances: 1
     vm_type: medium
     vm_extensions:
       - cf_loggregator_elbs
@@ -319,7 +319,7 @@ jobs:
   - name: router
     azs: [z1, z2]
     templates: (( grab meta.router_templates ))
-    instances: 2
+    instances: 1
     vm_type: router
     stemcell: default
     networks:
@@ -347,7 +347,7 @@ jobs:
         release: diego
       - name: metron_agent
         release: cf
-    instances: 2
+    instances: 1
     vm_type: medium
     stemcell: default
     networks:
@@ -408,7 +408,7 @@ jobs:
         release: diego
       - name: metron_agent
         release: cf
-    instances: 2
+    instances: 1
     vm_type: medium
     stemcell: default
     networks:
@@ -429,7 +429,7 @@ jobs:
         release: cf
       - name: datadog-route-emitter
         release: datadog-for-cloudfoundry
-    instances: 2
+    instances: 1
     vm_type: medium
     stemcell: default
     networks:
@@ -450,7 +450,7 @@ jobs:
         release: diego-patched
       - name: cfdot
         release: diego
-    instances: 2
+    instances: 1
     vm_type: small
     vm_extensions:
       - ssh_proxy_elb
