@@ -31,9 +31,9 @@ success() {
 
 check_aws_account_used() {
   required_account="${1}"
-  account_alias=$(aws iam list-account-aliases | grep gov-paas | tr -d '" ')
+  account_alias=$(aws iam list-account-aliases | grep mmg | tr -d '" ')
 
-  if [[ "${account_alias}" != "gov-paas-${required_account}" ]]; then
+  if [[ "${account_alias}" != "mmg${required_account}" ]]; then
     echo "Required AWS account is ${required_account}, but your aws-cli is using keys for ${account_alias}"
     exit 1
   fi
